@@ -23,8 +23,8 @@ var db = firebase.database();
 var app = express();
 
 app.get('/login', (req, res) => {
-    console.log(req);
-    var access_token = req.access_token;
+    console.log(req.code);
+    var access_token = req.code;
     // var user_ref = db.ref('users');
     var user_key = db.ref().child('users').push().key;
     var updates = {};
