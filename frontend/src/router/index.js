@@ -13,7 +13,7 @@ export default new Router({
       component: Login
     },
     {
-      path: '/helloworld/',
+      path: '/playlist/:id',
       name: 'Index',
       component: Index
     }

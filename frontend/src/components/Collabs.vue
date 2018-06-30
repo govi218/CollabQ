@@ -37,7 +37,7 @@
     name: 'Collabs',
     data() {
       return {
-
+          collabs: []
       }
     }
   }

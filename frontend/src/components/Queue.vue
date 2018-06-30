@@ -2,31 +2,12 @@
   <div class="col-lg queue">
     <h1>Queue</h1>
     <ul class="list-group">
-      <span>
+      <span v-for="(song,i) in queue" :key="i">
         <li class="list-group-item">
-          <u>Emotionless - Drake &emsp; &emsp; shaneieknnedy</u>
+          <u>{{song.name}} - {{song.artist}} &emsp; &emsp; {{song.adder}}</u>
         </li>
       </span>
-      <span>
-        <li class="list-group-item">
-          <u>Heartless - Kanye West &emsp; &emsp; govi218</u>
-        </li>
-      </span>
-      <span>
-        <li class="list-group-item">
-          <u>1985 - J. Cole &emsp; &emsp; germano</u>
-        </li>
-      </span>
-      <span>
-        <li class="list-group-item">
-          <u>High for this - the weeknd &emsp; &emsp; pepe</u>
-        </li>
-      </span>
-      <span>
-        <li class="list-group-item">
-          <u>Killuminati - Joey BadA$$ &emsp; &emsp; behrad</u>
-        </li>
-      </span>
+
     </ul>
   </div>
 </template>
@@ -36,14 +17,21 @@
     name: 'Queue',
     data() {
         return {
-
+            queue: []
+        }
+    },
+    methods: {
+        updateQueue() {
+            let code = window.location.search.substring(6);
+            /*axios.get('/api/queue').then(res => {
+                this.queue = res.data.queue;
+            }).catch(err => {
+                console.log(err);
+            })*/
         }
     },
     created() {
-        console.log('here')
-    },
-    mounted() {
-        console.log('here')
+        this.updateQueue();
     }
   }
 
