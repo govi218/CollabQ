@@ -1,6 +1,7 @@
 
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
+var bodyParser = require('body-parser');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
@@ -21,11 +22,13 @@ firebase.initializeApp(config);
 var db = firebase.database();
 
 var app = express();
-
-app.get('/login', (req, res) => {
-    console.log(req.code);
+app.use(express.bodyParser());
+app.post('/login', (req, res) => {
     var access_token = req.code;
-    // var user_ref = db.ref('users');
+    res.send({
+        data: 'ok'
+    })
+    /*// var user_ref = db.ref('users');
     var user_key = db.ref().child('users').push().key;
     var updates = {};
     updates['/users/' + user_key + '/' + 'access_token'] = access_token;
@@ -43,7 +46,7 @@ app.get('/login', (req, res) => {
         console.log(data.body);
     });
 
-    db.ref().update(updates);
+    db.ref().update(updates);*/
 });
 
 // app.use(express.static(__dirname + '../frontend'))

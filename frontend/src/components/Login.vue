@@ -3,7 +3,7 @@
     <div class="card-body container">
       <h5 class="card-title">Spotify Login</h5>
       <h6 class="card-subtitle mb-2 text-muted">To create a CollabQ, please log in with your spotify username and password</h6>
-      <form @submit='login' class="container" >
+      <form @submit='getSpotifyAuth' class="container" >
         <button type="submit" class="btn btn-primary" @click='getSpotifyAuth'>Log in with Spotify</button>
       </form>
     </div>
@@ -19,9 +19,6 @@
       }
     },
     methods: {
-        login() {
-            console.log(this.username, this.password);
-        },
         getSpotifyAuth() {
             // Get the hash of the url
             const hash = window.location.hash
@@ -60,7 +57,7 @@
     created() {
         if (window.location.search) {
             let code = window.location.search.substring(6);
-            axios.get('/api/login', {code}).then(res => {
+            axios.post('/api/login', {code}).then(res => {
 
             });
         }
