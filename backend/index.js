@@ -25,6 +25,7 @@ var app = express();
 app.use(bodyParser.json());
 app.post('/login', (req, res) => {
     var access_token = req.body.code;
+    console.log(access_token);
     // var user_ref = db.ref('users');
     var user_key = db.ref().child('users').push().key;
     var updates = {};
@@ -32,7 +33,8 @@ app.post('/login', (req, res) => {
 
     var spotifyApi = new SpotifyWebApi({
         clientId : spotify_client_id,
-        clientSecret : spotify_client_secret
+        clientSecret : spotify_client_secret,
+        redirectUri: 'http://localhost:8888'
     });
 
     spotifyApi.setAccessToken(access_token);
@@ -40,10 +42,14 @@ app.post('/login', (req, res) => {
     // start by getting user
     spotifyApi.getMe()
         .then(function(data) {
-        console.log(data.body);
+    }).catch(err => {
+        console.log(err);
     });
 
-    db.ref().update(updates);
+
+
+    //db.ref().update(updates);
+
     res.send({
         user_key
     });
