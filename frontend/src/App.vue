@@ -17,8 +17,8 @@ export default {
     if(window.location.hash) {
       axios.post('/api/login', {access_token: window.location.hash.substring(15)}).then(res => {
         console.log(res);
-        if(res.data != "")
-          this.$router.push('/playlist/' + res.data);
+        if(res.data.access_token)
+          this.$router.push('/playlist/' + res.data.id + '-' + res.data.access_token);
       }).catch(err => {
         console.log(err);
       });
