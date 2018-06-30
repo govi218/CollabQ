@@ -39,6 +39,9 @@ app.post('/login', (req, res) => {
 
     spotifyApi.setAccessToken(access_token);
 
+    // for storing intermediate promise results
+    var results = {};
+
     // start by getting user
     spotifyApi.getMe()
         .then(function(data) {
@@ -48,7 +51,17 @@ app.post('/login', (req, res) => {
                 access_token: access_token,
                 name: data.body.display_name
             })
-        }).catch(err => {
+            return data.body.id
+        })
+        .then((id) => {
+            spotifyApi.createPlaylist(id, 'Top Tracks This Month', {'public': true});
+        })
+        .then(function(data){
+            // get top tracks and store created playlist id
+            results.playlistId = data.body.id;
+            console.log(results.playlistId);            
+        })
+        .catch(err => {
             console.log(err);
         });
 
