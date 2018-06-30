@@ -43,7 +43,11 @@ app.post('/login', (req, res) => {
     spotifyApi.getMe()
         .then(function(data) {
             console.log(data);
-            res.send(data.id)
+            res.send({
+                id: data.body.id,
+                access_token: access_token,
+                name: data.body.display_name
+            })
         }).catch(err => {
             console.log(err);
         });
@@ -51,10 +55,6 @@ app.post('/login', (req, res) => {
 
 
     //db.ref().update(updates);
-
-    res.send({
-        user_key
-    });
 });
 
 // app.use(express.static(__dirname + '../frontend'))

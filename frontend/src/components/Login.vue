@@ -51,22 +51,11 @@
 
             // If there is no token, redirect to Spotify authorization
             if (!_token) {
-                window.open(`${authEndpoint}?client_id=${spotify_client_id}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token`);
-                console.log(window.location);
+                window.location = `${authEndpoint}?client_id=${spotify_client_id}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token`;
             }
         }
-    },
-    created() {
-        if (window.location.search) {
-            let code = window.location.search.substring(6);
-            axios.post('/api/login', {code}).then(res => {
-
-            });
-        }
-        
     }
   }
-
 </script>
 
 <style>
