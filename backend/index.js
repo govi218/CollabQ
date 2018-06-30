@@ -42,9 +42,11 @@ app.post('/login', (req, res) => {
     // start by getting user
     spotifyApi.getMe()
         .then(function(data) {
-    }).catch(err => {
-        console.log(err);
-    });
+            console.log(data);
+            res.send(data.id)
+        }).catch(err => {
+            console.log(err);
+        });
 
 
 
