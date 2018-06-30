@@ -22,14 +22,10 @@ firebase.initializeApp(config);
 var db = firebase.database();
 
 var app = express();
-app.use(express.bodyParser());
-
+app.use(bodyParser.json());
 app.post('/login', (req, res) => {
-    var access_token = req.code;
-    res.send({
-        data: 'ok'
-    })
-    /*// var user_ref = db.ref('users');
+    var access_token = req.body.code;
+    // var user_ref = db.ref('users');
     var user_key = db.ref().child('users').push().key;
     var updates = {};
     updates['/users/' + user_key + '/' + 'access_token'] = access_token;
@@ -47,7 +43,10 @@ app.post('/login', (req, res) => {
         console.log(data.body);
     });
 
-    db.ref().update(updates);*/
+    db.ref().update(updates);
+    res.send({
+        user_key
+    });
 });
 
 // app.use(express.static(__dirname + '../frontend'))
