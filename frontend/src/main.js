@@ -14,5 +14,5 @@ new Vue({
   router,
   components: { App },
   template: '<App/>'
-}).use(VueSpotify, new Spotify())
+})
 

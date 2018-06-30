@@ -35,6 +35,7 @@
 
             // Set token
             let _token = hash.access_token;
+            console.log(_token);
 
             const authEndpoint = 'https://accounts.spotify.com/authorize';
 
@@ -42,26 +43,24 @@
             var spotify_client_id = '186e87b7f394473084091612a45cdf3f';
             var spotify_client_secret = '48f0851bf51544d19c1782df41536000';
             const redirectUri = 'http://localhost:8080/';
-            const scopes = ['user-read-private user-read-email user-library-read',
-  ' user-follow-read user-read-recently-played user-read-currently-playing',
-' user-top-read playlist-modify-public playlist-read-private playlist-modify-private'];
+            const scopes = [
+            'user-read-birthdate',
+            'user-read-email',
+            'user-read-private'
+            ];
 
             // If there is no token, redirect to Spotify authorization
             if (!_token) {
-                window.location = `${authEndpoint}?client_id=${spotify_client_id}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=code`;
+                window.open(`${authEndpoint}?client_id=${spotify_client_id}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token`);
+                console.log(window.location);
             }
         }
     },
     created() {
         if (window.location.search) {
             let code = window.location.search.substring(6);
-            this.spotify.getUser('shaneikennedy').then(user => {
-                console.log(user);
-            })
             axios.post('/api/login', {code}).then(res => {
-                if(res.data.user_key) {
-                    this.$router.push('/playlist/'+res.data.user_key);
-                }
+
             });
         }
         

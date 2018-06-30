@@ -11,6 +11,9 @@ export default {
   name: 'App',
   components: {
     Navbar
+  },
+  created() {
+    console.log(window.location);
   }
 }
 </script>
