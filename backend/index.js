@@ -66,7 +66,7 @@ app.post('/login', (req, res) => {
     //db.ref().update(updates);
 });
 
-app.get('/',(req, res) => {
+app.get('/playlist',(req, res) => {
     var access_token = req.body.access_token;
     var spotifyApi = new SpotifyWebApi({
         clientId : spotify_client_id,
