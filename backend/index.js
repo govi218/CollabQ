@@ -26,9 +26,9 @@ app.use(bodyParser.json());
 app.post('/login', (req, res) => {
     var access_token = req.body.access_token;
     
-    // var user_key = db.ref().child('users').push().key;
-    // var updates = {};
-    // updates['/users/' + user_key + '/' + 'access_token'] = access_token;
+    var user_key = db.ref().child('users').push().key;
+    var updates = {};
+    updates['/users/' + user_key + '/' + 'access_token'] = access_token;
 
     var spotifyApi = new SpotifyWebApi({
         clientId : spotify_client_id,
@@ -58,12 +58,13 @@ app.post('/login', (req, res) => {
         .then(function(data){
             // get top tracks and store created playlist id
             results.playlistId = data.body.id;
-            console.log(results.playlistId);            
+            console.log(results.playlistId);
+            updates['/users/' + user_key + '/' + 'playlist_id'] = results.playlistId;          
         })
         .catch(err => {
             console.log(err);
         });
-    //db.ref().update(updates);
+    db.ref().update(updates);
 });
 
 app.get('/playlist',(req, res) => {
