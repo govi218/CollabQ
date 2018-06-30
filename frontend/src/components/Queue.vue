@@ -38,6 +38,12 @@
         return {
 
         }
+    },
+    created() {
+        console.log('here')
+    },
+    mounted() {
+        console.log('here')
     }
   }
 
