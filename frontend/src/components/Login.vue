@@ -48,26 +48,11 @@
 
             // If there is no token, redirect to Spotify authorization
             if (!_token) {
-                window.location = `${authEndpoint}?client_id=${spotify_client_id}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=code`;
+                window.location = `${authEndpoint}?client_id=${spotify_client_id}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token`;
             }
         }
-    },
-    created() {
-        if (window.location.search) {
-            let code = window.location.search.substring(6);
-            this.spotify.getUser('shaneikennedy').then(user => {
-                console.log(user);
-            })
-            axios.post('/api/login', {code}).then(res => {
-                if(res.data.user_key) {
-                    this.$router.push('/playlist/'+res.data.user_key);
-                }
-            });
-        }
-        
     }
   }
-
 </script>
 
 <style>

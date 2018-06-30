@@ -13,21 +13,19 @@
 </template>
 
 <script>
+  import SpotifyWebApi from 'spotify-web-api-node'
   export default {
     name: 'Queue',
     data() {
         return {
-            queue: []
+            queue: [],
+            spotify: null,
+            code: ''
         }
     },
     methods: {
         updateQueue() {
-            let code = window.location.search.substring(6);
-            /*axios.get('/api/queue').then(res => {
-                this.queue = res.data.queue;
-            }).catch(err => {
-                console.log(err);
-            })*/
+            
         }
     },
     created() {
