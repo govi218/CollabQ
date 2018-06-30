@@ -24,7 +24,7 @@ var db = firebase.database();
 var app = express();
 app.use(bodyParser.json());
 app.post('/login', (req, res) => {
-    var access_token = req.body.code;
+    var access_token = req.body.access_token;
     console.log(access_token);
     // var user_ref = db.ref('users');
     var user_key = db.ref().child('users').push().key;
