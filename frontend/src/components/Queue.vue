@@ -14,18 +14,22 @@
 
 <script>
   import SpotifyWebApi from 'spotify-web-api-node'
+  import axios from 'axios'
   export default {
     name: 'Queue',
     data() {
         return {
             queue: [],
-            spotify: null,
-            code: ''
         }
     },
     methods: {
         updateQueue() {
-            
+            const AT = this.$route.path.substring(10);
+            axios.post('/api/playlist', {id: AT.split('-')[0], access_token: AT.split('-')[1]}).then(res => {
+                console.log(res);
+            }).catch(err => {
+                console.log(err);
+            });
         }
     },
     created() {
