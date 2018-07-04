@@ -1,33 +1,12 @@
 <template>
-  <div class="col-sm collabs">
+  <div class="col- collabs">
     <h1>Collabs</h1>
     <ul class="list-group">
-      <span>
+      <span v-for="(collab, i) in collabs" :key="i">
         <li class="list-group-item">
-          <u>shaneikennedy</u>
+          <u>{{collab}}</u>
         </li>
       </span>
-      <span>
-        <li class="list-group-item">
-          <u>govi218</u>
-        </li>
-      </span>
-      <span>
-        <li class="list-group-item">
-          <u>germano</u>
-        </li>
-      </span>
-      <span>
-        <li class="list-group-item">
-          <u>pepe</u>
-        </li>
-      </span>
-      <span>
-        <li class="list-group-item">
-          <u>behrad</u>
-        </li>
-      </span>
-
     </ul>
   </div>
 </template>
@@ -35,9 +14,9 @@
 <script>
   export default {
     name: 'Collabs',
+    props: ['collabs'],
     data() {
       return {
-          collabs: []
       }
     }
   }

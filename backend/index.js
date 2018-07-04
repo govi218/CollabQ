@@ -9,6 +9,11 @@ var firebase = require('firebase');
 
 var spotify_client_id = '186e87b7f394473084091612a45cdf3f';
 var spotify_client_secret = '48f0851bf51544d19c1782df41536000';
+var spotifyApi = new SpotifyWebApi({
+    clientId : spotify_client_id,
+    clientSecret : spotify_client_secret,
+    redirectUri: 'http://localhost:8888'
+});
 
 var config = {
     apiKey: "AIzaSyDktyjbfU8F8MOCmJs0WycgeHH0DGkggTc",
@@ -29,13 +34,6 @@ app.post('/login', (req, res) => {
     var user_key = db.ref().child('users').push().key;
     var updates = {};
     updates['/users/' + user_key + '/' + 'access_token'] = access_token;
-
-    var spotifyApi = new SpotifyWebApi({
-        clientId : spotify_client_id,
-        clientSecret : spotify_client_secret,
-        redirectUri: 'http://localhost:8888'
-    });
-
     spotifyApi.setAccessToken(access_token);
 
     // for storing intermediate promise results
@@ -43,38 +41,32 @@ app.post('/login', (req, res) => {
 
     // start by getting user
     spotifyApi.getMe()
-        .then(function(data) {
-            console.log(data.body);
+        .then((data) => {
             res.send({
                 id: data.body.id,
                 access_token: access_token,
                 name: data.body.display_name
             })
-            return data.body.id
+            return data;
         })
-        .then((id) => {
-            spotifyApi.createPlaylist(id, id, {'public': true});
+        .then((data) => {
+            spotifyApi.createPlaylist(data.body.id, data.body.id, {'public': true});
+            return data;
         })
-        .then(function(data){
+        .then((data) => {
             // get top tracks and store created playlist id
             results.playlistId = data.body.id;
-            console.log(results.playlistId);
             updates['/users/' + user_key + '/' + 'playlist_id'] = results.playlistId;          
+        }).then(() => {
+            db.ref().update(updates);
         })
         .catch(err => {
             console.log(err);
         });
-    db.ref().update(updates);
 });
 
 app.get('/playlist',(req, res) => {
     var access_token = req.body.access_token;
-    var spotifyApi = new SpotifyWebApi({
-        clientId : spotify_client_id,
-        clientSecret : spotify_client_secret,
-        redirectUri: 'http://localhost:8888'
-    });
-
     spotifyApi.setAccessToken(access_token);
     spotifyApi.getPlaylist(req.id, req.id)
         .then((data) => {
@@ -85,5 +77,33 @@ app.get('/playlist',(req, res) => {
         });
 });
 
-console.log('Listening on 8888');
-app.listen(8888);
+app.get('/search', (req,res,next) => {
+    let results = [];
+    let toSearch = req.query.search;
+    spotifyApi.setAccessToken(req.query.AT);
+    spotifyApi.searchTracks(toSearch)
+        .then(r => {
+            r.body.tracks.items.forEach(song => {
+                let ars = [];
+                song.artists.forEach(artist => {
+                    ars.push(artist.name);
+                });
+                results.push({
+                    name: song.name,
+                    artist: ars.join(', '),
+                    id: song.id
+                });
+            });
+            res.send(results);
+        }).catch( err => {
+            console.log(err);
+        });
+})
+
+app.listen(8888, (err) => {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log('Listening on port 8888!');
+    }
+});
