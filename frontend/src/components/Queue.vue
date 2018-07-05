@@ -1,13 +1,10 @@
 <template>
   <div class="col-lg queue">
     <h1>Queue</h1>
-    <ul class="list-group">
-      <span v-for="(song,i) in queue" :key="i">
-        <li class="list-group-item">
+    <ul class="list-group list-inline">
+        <li class="list-group-item" v-for="(song,i) in queue" :key="i">
           <u>{{song.name}} - {{song.artist}} &emsp; &emsp; {{song.adder}}</u>
         </li>
-      </span>
-
     </ul>
   </div>
 </template>
@@ -17,19 +14,24 @@
   import axios from 'axios'
   export default {
     name: 'Queue',
+    props: ['queue'],
     data() {
         return {
-            queue: [],
         }
     },
     methods: {
         updateQueue() {
-            const AT = this.$route.path.substring(10);
+            /*const AT = this.$route.path.substring(10);
             axios.post('/api/playlist', {id: AT.split('-')[0], access_token: AT.split('-')[1]}).then(res => {
-                console.log(res);
+                //we get the whole playlist back, but we want it too look like a queue. so, filter all songs prior to the currently playing song
+                queue = res.data.playlist;
+                let i = 0;
+                while (queue[i] != res.data.currentlyPlaying){
+                    queue.pop(0);
+                }
             }).catch(err => {
                 console.log(err);
-            });
+            });*/
         }
     },
     created() {
@@ -40,6 +42,11 @@
 </script>
 
 <style>
+.list-group {
+    text-align: center;
+    justify-content: center;
+    display: flex;
+}
 .list-group-item{
     background: black;
     color: white;

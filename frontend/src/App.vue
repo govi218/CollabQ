@@ -15,8 +15,10 @@ export default {
   },
   created() {
     if(window.location.hash) {
-      axios.post('/api/login', {access_token: window.location.hash.substring(15)}).then(res => {
-        console.log(res);
+      let url = window.location.hash.split('=');
+      url.shift();
+      const AT = url;
+      axios.post('/api/login', {access_token: AT}).then(res => {
         if(res.data.access_token)
           this.$router.push('/playlist/' + res.data.id + '-' + res.data.access_token);
       }).catch(err => {
