@@ -5,7 +5,15 @@ var bodyParser = require('body-parser');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
-var firebase = require('firebase');
+var admin = require("firebase-admin");
+
+var serviceAccount = require('./collabq-f33b8-2a73ed28b3ec.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://collabq-f33b8.firebaseio.com"
+});
+
 
 var spotify_client_id = '186e87b7f394473084091612a45cdf3f';
 var spotify_client_secret = '48f0851bf51544d19c1782df41536000';
@@ -15,17 +23,9 @@ var spotifyApi = new SpotifyWebApi({
     redirectUri: 'http://localhost:8888'
 });
 
-var config = {
-    apiKey: "AIzaSyDktyjbfU8F8MOCmJs0WycgeHH0DGkggTc",
-    authDomain: "collabq-f33b8.firebaseapp.com",
-    databaseURL: "https://collabq-f33b8.firebaseio.com",
-    storageBucket: "collabq-f33b8.appspot.com",
-};
-
 console.log('before');
-firebase.initializeApp(config);
 
-var db = firebase.database();
+var db = admin.database();
 console.log('after');
 var app = express();
 app.use(bodyParser.json());
