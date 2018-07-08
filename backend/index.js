@@ -77,10 +77,10 @@ app.post('/login', (req, res) => {
 
 app.post('/add_songs', (req, res) => {
     // get req data
-    const access_token = req.query.access_token;
+    const access_token = req.body.access_token;
     let updates = {};
     let songs = [];
-    songs.push(req.query.song);
+    songs.push(req.body.song);
 
     console.log(access_token);
 
