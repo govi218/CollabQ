@@ -33,62 +33,45 @@ app.use(bodyParser.json());
 
 app.post('/login', (req, res) => {
     const access_token = req.body.access_token;
-    
-    db.ref('users').orderByChild('access_token').equalTo(access_token[0])
-        .on('value', (snapshot) => {
-            console.log(snapshot.val());
-            // new user
-            if (snapshot.val() === null) {
-                let user_key = db.ref().child('users').push().key;
-                let updates = {};
-                updates['/users/' + user_key + '/' + 'access_token'] = access_token[0];
-                updates['/users/' + user_key + '/' + 'user_key'] = user_key;
-                spotifyApi.setAccessToken(access_token);
+    let user_key = db.ref().child('users').push().key;
+    let updates = {};
+    updates['/users/' + user_key + '/' + 'access_token'] = access_token[0];
+    updates['/users/' + user_key + '/' + 'user_key'] = user_key;
+    spotifyApi.setAccessToken(access_token);
 
-                // for storing intermediate promise results
-                let results = {};
+    // for storing intermediate promise results
+    let results = {};
 
-                // start by getting user
-                spotifyApi.getMe()
-                    .then((data) => {
-                        console.log(access_token);
-                        res.send({
-                            id: data.body.id,
-                            access_token: access_token,
-                            name: data.body.display_name
-                        })
-                        results.name = data.body.display_name;
-                        return data;
-                    })
-                    // then create a playlist
-                    .then((data) => {
-                        spotifyApi.createPlaylist(data.body.id, data.body.id, {'public': true});
-                        return data;
-                    })
-                    .then((data) => {
-                        // store playlist id; create collaborators list
-                        results.playlistId = data.body.id;
-                        let collaborators = [];
-                        collaborators.push(results.name);
-                        updates['/users/' + user_key + '/' + 'playlist_id'] = results.playlistId;
-                        updates['/users/' + user_key + '/' + 'name'] = results.name; 
-                        updates['/users/' + user_key + '/' + 'collaborators'] = collaborators;          
-                    }).then(() => {
-                        db.ref().update(updates);
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
-            } else {
-                // login existing user
-                let user = snapshot.val();
-                console.log(user);
-                res.send({
-                    id: user.playlist_id,
-                    access_token: req.body.access_token,
-                    name: user.name
-                })
-            }
+    // start by getting user
+    spotifyApi.getMe()
+        .then((data) => {
+            console.log(access_token);
+            res.send({
+                id: data.body.id,
+                access_token: access_token,
+                name: data.body.display_name
+            })
+            results.name = data.body.display_name;
+            return data;
+        })
+        // then create a playlist
+        .then((data) => {
+            spotifyApi.createPlaylist(data.body.id, data.body.id, {'public': true});
+            return data;
+        })
+        .then((data) => {
+            // store playlist id; create collaborators list
+            results.playlistId = data.body.id;
+            let collaborators = [];
+            collaborators.push(results.name);
+            updates['/users/' + user_key + '/' + 'playlist_id'] = results.playlistId;
+            updates['/users/' + user_key + '/' + 'name'] = results.name; 
+            updates['/users/' + user_key + '/' + 'collaborators'] = collaborators;          
+        }).then(() => {
+            db.ref().update(updates);
+        })
+        .catch(err => {
+            console.log(err);
         });
 });
 
