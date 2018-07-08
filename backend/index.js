@@ -1,13 +1,13 @@
 
-var express = require('express'); // Express web server framework
-var request = require('request'); // "Request" library
-var bodyParser = require('body-parser');
-var querystring = require('querystring');
-var cookieParser = require('cookie-parser');
-var SpotifyWebApi = require('spotify-web-api-node');
-var admin = require("firebase-admin");
+const express = require('express'); // Express web server framework
+const request = require('request'); // "Request" library
+const bodyParser = require('body-parser');
+const querystring = require('querystring');
+const cookieParser = require('cookie-parser');
+const SpotifyWebApi = require('spotify-web-api-node');
+const admin = require("firebase-admin");
 
-var serviceAccount = require('./collabq-f33b8-2a73ed28b3ec.json');
+const serviceAccount = require('./collabq-f33b8-2a73ed28b3ec.json');
 
 /* CREDENTIALS */
 
@@ -17,34 +17,35 @@ admin.initializeApp({
 });
 
 
-var spotify_client_id = '186e87b7f394473084091612a45cdf3f';
-var spotify_client_secret = '48f0851bf51544d19c1782df41536000';
-var spotifyApi = new SpotifyWebApi({
+const spotify_client_id = '186e87b7f394473084091612a45cdf3f';
+const spotify_client_secret = '48f0851bf51544d19c1782df41536000';
+const spotifyApi = new SpotifyWebApi({
     clientId : spotify_client_id,
     clientSecret : spotify_client_secret,
     redirectUri: 'http://localhost:8888'
 });
 
-var db = admin.database();
-var app = express();
+const db = admin.database();
+const app = express();
 app.use(bodyParser.json());
 
 /* ROUTES */
 
 app.post('/login', (req, res) => {
-    var access_token = req.body.access_token;
+    const access_token = req.body.access_token;
     
-    var user_key = db.ref().child('users').push().key;
-    var updates = {};
-    updates['/users/' + user_key + '/' + 'access_token'] = access_token;
+    let user_key = db.ref().child('users').push().key;
+    let updates = {};
+    updates['/users/' + user_key + '/' + 'access_token'] = access_token[0];
     spotifyApi.setAccessToken(access_token);
 
     // for storing intermediate promise results
-    var results = {};
+    let results = {};
 
     // start by getting user
     spotifyApi.getMe()
         .then((data) => {
+            console.log(access_token);
             res.send({
                 id: data.body.id,
                 access_token: access_token,
@@ -63,8 +64,7 @@ app.post('/login', (req, res) => {
             results.playlistId = data.body.id;
             let collaborators = [];
             collaborators.push(results.name);
-            updates['/users/' + user_key + '/' + 'playlist_id'] = results.playlistId;    
-            updates['/users/' + user_key + '/' + 'songs'] = [];            
+            updates['/users/' + user_key + '/' + 'playlist_id'] = results.playlistId; 
             updates['/users/' + user_key + '/' + 'collaborators'] = collaborators;          
         }).then(() => {
             db.ref().update(updates);
@@ -74,8 +74,41 @@ app.post('/login', (req, res) => {
         });
 });
 
+app.post('/add_song', (req, res) => {
+    // get req data
+    const access_token = req.query.access_token;
+    let updates = {};
+    songs.push(req.body.songs);
+
+    // initialize api
+    spotifyApi.setAccessToken(access_token);
+    let user = db.ref('users').orderByChild('access_token').equalTo(access_token[0]);
+
+    // add song to playlist
+    let results = [];
+    spotifyApi.getMe()
+        .then((data) => {
+            return spotifyApi.addTracksToPlaylist(data.body.id, data.body.id, songs);
+        })
+        .then((data) => {
+            console.log(data);
+        })
+        .catch((err) => {
+            console.log('Error: ' + err);
+        });
+    
+    if (user.songs !== null || user.songs != undefined) {
+        songs = user.songs;
+        songs.push(req.body.songs);
+        console.log(songs);
+    }
+
+    updates['/users/' + user.user_key + '/' + 'songs'] = songs; 
+    db.ref().update(updates);
+});
+
 app.get('/playlist',(req, res) => {
-    var access_token = req.body.access_token;
+    const access_token = req.body.access_token;
     spotifyApi.setAccessToken(access_token);
     spotifyApi.getPlaylist(req.id, req.id)
         .then((data) => {
