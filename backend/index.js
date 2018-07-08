@@ -82,9 +82,10 @@ app.post('/login', (req, res) => {
             } else {
                 // login existing user
                 let user = snapshot.val();
+                console.log(user);
                 res.send({
-                    id: data.body.id,
-                    access_token: user.playlist_id,
+                    id: user.playlist_id,
+                    access_token: req.body.access_token,
                     name: user.name
                 })
             }
