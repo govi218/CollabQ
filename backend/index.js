@@ -73,7 +73,7 @@ app.post('/login', (req, res) => {
             updates['/users/' + user_key + '/' + 'playlist_id'] = results.playlistId; 
             updates['/users/' + user_key + '/' + 'collaborators'] = collaborators;          
         }).then(() => {
-            db.ref().update(updates);
+            // db.ref().update(updates);
         })
         .catch(err => {
             console.log(err);
