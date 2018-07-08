@@ -34,8 +34,10 @@ app.use(bodyParser.json());
 app.post('/login', (req, res) => {
     const access_token = req.body.access_token;
     
-    let user = db.ref('users').orderByChild('access_token').equalTo(access_token[0]);
-    console.log(user);
+    db.ref('users').orderByChild('access_token').equalTo(access_token[0])
+        .on('value', (snapshot) => {
+            console.log(snapshot.val());
+        });
 
     let user_key = db.ref().child('users').push().key;
     let updates = {};
