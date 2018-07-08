@@ -56,8 +56,7 @@ app.post('/login', (req, res) => {
         })
         // then create a playlist
         .then((data) => {
-            spotifyApi.createPlaylist(data.body.id, data.body.id, {'public': true});
-            return data;
+            return spotifyApi.createPlaylist(data.body.id, data.body.id, {'public': true});
         })
         .then((data) => {
             // store playlist id; create collaborators list
