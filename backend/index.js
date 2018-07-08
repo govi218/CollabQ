@@ -80,7 +80,7 @@ app.post('/add_song', (req, res) => {
     const access_token = req.query.access_token;
     let updates = {};
     let songs = [];
-    songs.push(req.body.songs);
+    songs.push(req.body.song);
 
     // initialize api
     spotifyApi.setAccessToken(access_token);
@@ -93,7 +93,7 @@ app.post('/add_song', (req, res) => {
             let results = [];
             spotifyApi.getMe()
                 .then((data) => {
-                    return spotifyApi.addTracksToPlaylist(data.body.id, data.body.id, songs);
+                    return spotifyApi.addTracksToPlaylist(data.body.id, user.playlist_id, songs);
                 })
                 .then((data) => {
                     console.log(data);
