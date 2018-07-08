@@ -61,6 +61,7 @@ app.post('/login', (req, res) => {
         })
         .then((data) => {
             // store playlist id; create collaborators list
+            console.log(data.body);
             results.playlistId = data.body.id;
             let collaborators = [];
             collaborators.push(results.name);
@@ -84,29 +85,32 @@ app.post('/add_song', (req, res) => {
 
     // initialize api
     spotifyApi.setAccessToken(access_token);
-    let user = db.ref('users').orderByChild('access_token').equalTo(access_token[0]);
-
-    // add song to playlist
-    let results = [];
-    spotifyApi.getMe()
-        .then((data) => {
-            return spotifyApi.addTracksToPlaylist(data.body.id, data.body.id, songs);
+    db.ref('users').orderByChild('access_token').equalTo(access_token[0])
+        .then((snapshot) => {
+            return snapshot.val();
         })
-        .then((data) => {
-            console.log(data);
-        })
-        .catch((err) => {
-            console.log('Error: ' + err);
-        });
-    
-    if (user.songs !== null || user.songs != undefined) {
-        songs = user.songs;
-        songs.push(req.body.songs);
-        console.log(songs);
-    }
+        .then((user) => {{
+            // add song to playlist
+            let results = [];
+            spotifyApi.getMe()
+                .then((data) => {
+                    return spotifyApi.addTracksToPlaylist(data.body.id, data.body.id, songs);
+                })
+                .then((data) => {
+                    console.log(data);
+                    if (user.songs !== null || user.songs != undefined) {
+                        songs = user.songs;
+                        songs.push(req.body.songs);
+                        console.log(songs);
+                    }
 
-    updates['/users/' + user.user_key + '/' + 'songs'] = songs; 
-    db.ref().update(updates);
+                    updates['/users/' + user.user_key + '/' + 'songs'] = songs; 
+                    db.ref().update(updates);
+                })
+                .catch((err) => {
+                    console.log('Error: ' + err);
+                });
+        }})    
 });
 
 app.get('/playlist',(req, res) => {
