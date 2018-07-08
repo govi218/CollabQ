@@ -22,6 +22,8 @@
   import Queue from '@/components/Queue'
   import Collabs from '@/components/Collabs'
   import AddSongs from '@/components/AddSongs'
+  import axios from 'axios'
+  import db from '@/database/firebase.js'
   export default {
     name: 'Index',
     data() {
@@ -48,12 +50,25 @@
         playlistName: "Shane's Collaborative Playlist",
         userName: '',
         feedback: null,
-        AT: ''
+        AT: '',
+        nowPLaying: ''
       }
     },
     created() {
-      //get playlist from backend
+      //get playlist from firebase
       //update songs, update collaborators
+      let ref = db.ref('users')
+      ref.once("value").then(snap => {
+        snap.forEach(child => {
+          console.log(child.val());
+        });
+
+      }).catch (err => {
+        console.log(err);
+      })
+      
+
+      //store access token for api requests
       let url = window.location.hash.split('-');
       url.shift();
       this.AT = url.join('-').split('&')[0];
@@ -70,10 +85,16 @@
           return;
         } else {
           this.feedback = null;
-          this.queue.push({name: data.song.name, artist: data.song.artist, adder: this.userName});
+          /*this.queue.push({name: data.song.name, artist: data.song.artist, adder: this.userName});
           if (this.collabs.indexOf(this.userName) == -1) {
             this.collabs.push(this.userName);
-          }
+          }*/
+          axios.post('api/add_songs/', {access_token: this.AT, song: data.id}).then(res => {
+            //make furebase call to get updated playlist
+            console.log(res);
+          }).catch(err => {
+            console.log(err);
+          })
         }
       }
       //TODO: set up firebase listener for db updates
