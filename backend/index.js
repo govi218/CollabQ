@@ -50,6 +50,7 @@ app.post('/login', (req, res) => {
                 access_token: access_token,
                 name: data.body.display_name
             })
+            results.name = data.body.display_name;
             return data;
         })
         // then create a playlist
@@ -60,9 +61,11 @@ app.post('/login', (req, res) => {
         .then((data) => {
             // store playlist id; create songs and collaborators lists
             results.playlistId = data.body.id;
+            let collaborators = [];
+            collaborators.push(results.name);
             updates['/users/' + user_key + '/' + 'playlist_id'] = results.playlistId;    
             updates['/users/' + user_key + '/' + 'songs'] = [];            
-            updates['/users/' + user_key + '/' + 'collaborators'] = [];          
+            updates['/users/' + user_key + '/' + 'collaborators'] = collaborators;          
         }).then(() => {
             db.ref().update(updates);
         })
