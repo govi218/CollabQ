@@ -34,9 +34,13 @@ app.use(bodyParser.json());
 app.post('/login', (req, res) => {
     const access_token = req.body.access_token;
     
+    let user = db.ref('users').orderByChild('access_token').equalTo(access_token[0]);
+    console.log(user);
+
     let user_key = db.ref().child('users').push().key;
     let updates = {};
     updates['/users/' + user_key + '/' + 'access_token'] = access_token[0];
+    updates['/users/' + user_key + '/' + 'user_key'] = user_key;
     spotifyApi.setAccessToken(access_token);
 
     // for storing intermediate promise results
@@ -60,7 +64,7 @@ app.post('/login', (req, res) => {
             return data;
         })
         .then((data) => {
-            // store playlist id; create songs and collaborators lists
+            // store playlist id; create collaborators list
             results.playlistId = data.body.id;
             let collaborators = [];
             collaborators.push(results.name);
@@ -78,6 +82,7 @@ app.post('/add_song', (req, res) => {
     // get req data
     const access_token = req.query.access_token;
     let updates = {};
+    let songs = [];
     songs.push(req.body.songs);
 
     // initialize api
