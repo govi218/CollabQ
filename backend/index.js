@@ -45,6 +45,7 @@ app.post('/login', (req, res) => {
     // start by getting user
     spotifyApi.getMe()
         .then((data) => {
+            console.log(access_token);
             res.send({
                 id: data.body.id,
                 access_token: access_token,
