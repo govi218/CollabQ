@@ -75,7 +75,7 @@ app.post('/login', (req, res) => {
         });
 });
 
-app.post('/add_song', (req, res) => {
+app.post('/add_songs', (req, res) => {
     // get req data
     const access_token = req.query.access_token;
     let updates = {};
