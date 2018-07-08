@@ -82,9 +82,11 @@ app.post('/add_songs', (req, res) => {
     let songs = [];
     songs.push(req.query.song);
 
+    console.log(access_token);
+
     // initialize api
     spotifyApi.setAccessToken(access_token);
-    db.ref('users').orderByChild('access_token').equalTo(access_token[0])
+    db.ref('users').orderByChild('access_token').equalTo(access_token)
         .then((snapshot) => {
             return snapshot.val();
         })
