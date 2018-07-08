@@ -9,6 +9,8 @@ var admin = require("firebase-admin");
 
 var serviceAccount = require('./collabq-f33b8-2a73ed28b3ec.json');
 
+/* CREDENTIALS */
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://collabq-f33b8.firebaseio.com"
@@ -23,12 +25,12 @@ var spotifyApi = new SpotifyWebApi({
     redirectUri: 'http://localhost:8888'
 });
 
-console.log('before');
-
 var db = admin.database();
-console.log('after');
 var app = express();
 app.use(bodyParser.json());
+
+/* ROUTES */
+
 app.post('/login', (req, res) => {
     var access_token = req.body.access_token;
     
@@ -50,14 +52,17 @@ app.post('/login', (req, res) => {
             })
             return data;
         })
+        // then create a playlist
         .then((data) => {
             spotifyApi.createPlaylist(data.body.id, data.body.id, {'public': true});
             return data;
         })
         .then((data) => {
-            // get top tracks and store created playlist id
+            // store playlist id; create songs and collaborators lists
             results.playlistId = data.body.id;
-            updates['/users/' + user_key + '/' + 'playlist_id'] = results.playlistId;          
+            updates['/users/' + user_key + '/' + 'playlist_id'] = results.playlistId;    
+            updates['/users/' + user_key + '/' + 'songs'] = [];            
+            updates['/users/' + user_key + '/' + 'collaborators'] = [];          
         }).then(() => {
             db.ref().update(updates);
         })

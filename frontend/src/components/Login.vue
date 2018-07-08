@@ -52,6 +52,7 @@
             // If there is no token, redirect to Spotify authorization
             if (!_token) {
                 var loc = `${authEndpoint}?client_id=${spotify_client_id}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token`;
+                console.log(loc);
                 window.location.href = loc;
             }
         }
