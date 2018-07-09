@@ -78,7 +78,7 @@ app.post('/add_songs', (req, res) => {
     const access_token = req.body.access_token;
     let updates = {};
     let songs = [];
-    songs.push(req.body.song);
+    songs.push(req.query.song);
 
     console.log(access_token);
 
@@ -86,7 +86,7 @@ app.post('/add_songs', (req, res) => {
     spotifyApi.setAccessToken(access_token);
     db.ref('users').orderByChild('access_token').equalTo(access_token).once('value', (snapshot) => {
         let user = snapshot.val();
-        console.log(user);
+        console.log(user.playlist_id);
 
         // add song to playlist
         spotifyApi.getMe()
