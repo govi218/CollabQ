@@ -87,29 +87,28 @@ app.post('/add_songs', (req, res) => {
     // initialize api
     spotifyApi.setAccessToken(access_token);
     db.ref('users').orderByChild('access_token').equalTo(access_token).on('value', (snapshot) => {
-        return snapshot.val();
-    })
-    .then((user) => {
+        let user = snapshot.val();
+
         // add song to playlist
         spotifyApi.getMe()
-            .then((data) => {
-                return spotifyApi.addTracksToPlaylist(data.body.id, user.playlist_id, songs);
-            })
-            .then((data) => {
-                console.log(data);
-                if (user.songs !== null || user.songs != undefined) {
-                    songs = user.songs;
-                    songs.push(req.body.songs);
-                    console.log(songs);
-                }
+        .then((data) => {
+            return spotifyApi.addTracksToPlaylist(data.body.id, user.playlist_id, songs);
+        })
+        .then((data) => {
+            console.log(data);
+            if (user.songs !== null || user.songs != undefined) {
+                songs = user.songs;
+                songs.push(req.body.songs);
+                console.log(songs);
+            }
 
-                updates['/users/' + user.user_key + '/' + 'songs'] = songs; 
-                db.ref().update(updates);
-            })
-            .catch((err) => {
-                console.log('Error: ' + err);
-            });
-    })    
+            updates['/users/' + user.user_key + '/' + 'songs'] = songs; 
+            db.ref().update(updates);
+        })
+        .catch((err) => {
+            console.log('Error: ' + err);
+        });
+    })  
 });
 
 app.get('/playlist',(req, res) => {
