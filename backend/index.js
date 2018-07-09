@@ -45,7 +45,6 @@ app.post('/login', (req, res) => {
     // start by getting user
     spotifyApi.getMe()
         .then((data) => {
-            console.log(access_token);
             res.send({
                 id: data.body.id,
                 access_token: access_token,
@@ -60,7 +59,6 @@ app.post('/login', (req, res) => {
         })
         .then((data) => {
             // store playlist id; create collaborators list
-            console.log(data.body);
             results.playlistId = data.body.id;
             let collaborators = [];
             collaborators.push(results.name);
