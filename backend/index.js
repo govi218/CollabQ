@@ -91,6 +91,9 @@ app.post('/add_songs', (req, res) => {
         // add song to playlist
         spotifyApi.getMe()
         .then((data) => {
+            console.log(data.body.id);
+            console.log(user.playlist_id);
+            console.log(songs);
             return spotifyApi.addTracksToPlaylist(data.body.id, user.playlist_id, songs);
         })
         .then((data) => {
