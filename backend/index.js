@@ -84,7 +84,7 @@ app.post('/add_songs', (req, res) => {
 
     // initialize api
     spotifyApi.setAccessToken(access_token);
-    db.ref('users').orderByChild('access_token').equalTo(access_token).on('value', (snapshot) => {
+    db.ref('users').orderByChild('access_token').equalTo(access_token).once('value', (snapshot) => {
         let user = snapshot.val();
         console.log(user);
 
